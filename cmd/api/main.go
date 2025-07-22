@@ -1,32 +1,26 @@
-//go:build !wireinject
-// +build !wireinject
-
 package main
 
 import (
-	"log"
-
-	"github.com/google/wire"
-	"github.com/taska-auth-me-go/internal/application/ports"
-	"github.com/taska-auth-me-go/internal/application/services"
-	"github.com/taska-auth-me-go/internal/domain"
-	"github.com/taska-auth-me-go/internal/infrastructure/auth"
-	"github.com/taska-auth-me-go/internal/infrastructure/persistence/gorm"
-	"github.com/taska-auth-me-go/internal/interfaces/http/handlers"
-	"github.com/taska-auth-me-go/internal/interfaces/http/middlewares"
-	"github.com/taska-auth-me-go/pkg/config"
-	"gorm.io/gorm"
+	"os"
 )
 
+// @title Tareaya API
+// @version 1.0
+// @description Tareaya API for use with his admin project.
+// @contact.email wilson.valencia.06091988@gmail.com
 func main() {
-	// Inicializar la aplicación con inyección de dependencias
-	app, err := InitializeApp()
+	appInstance, err := app.Start()
 	if err != nil {
-		log.Fatalf("Error al inicializar la aplicación: %v", err)
+		//loggers.Error("Failed to initialize application", err)
+		os.Exit(1)
 	}
 
-	// Iniciar el servidor
-	if err := app.Run(); err != nil {
-		log.Fatalf("Error al iniciar el servidor: %v", err)
+	port := ":8080"
+	//loggers.Info("Starting server", "port", port)
+
+	if err := appInstance.Start(port); err != nil {
+		//loggers.Error("Server failed to start", err)
+		os.Exit(1)
 	}
+	//loggers.Info("Server started successfully", "port", port)
 }

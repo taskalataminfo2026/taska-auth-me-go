@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package main
+package app
 
 import (
 	"github.com/google/wire"
@@ -12,7 +12,6 @@ import (
 	"github.com/taska-auth-me-go/internal/infrastructure/persistence/gorm"
 	"github.com/taska-auth-me-go/internal/interfaces/http/handlers"
 	"github.com/taska-auth-me-go/internal/interfaces/http/middlewares"
-	"github.com/taska-auth-me-go/pkg/config"
 	"gorm.io/gorm"
 )
 

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/taskalataminfo2026/taska-auth-me-go/cmd/api/app"
 	"os"
 )
 
-// @title Tareaya API
+// @title Taska API
 // @version 1.0
-// @description Tareaya API for use with his admin project.
-// @contact.email wilson.valencia.06091988@gmail.com
+// @description Taska API for use with his admin project.
+// @contact.email wilsonev.saldarriaga88@gmail.com
 func main() {
 	appInstance, err := app.Start()
 	if err != nil {

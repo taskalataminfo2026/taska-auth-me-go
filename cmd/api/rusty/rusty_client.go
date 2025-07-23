@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"github.com/labstack/gommon/log"
 	"github.com/taskalataminfo2026/taska-auth-me-go/cmd/api/config"
+	"github.com/taskalataminfo2026/taska-auth-me-go/cmd/api/utils"
+	"github.com/taskalataminfo2026/tool-kit-lib-go/pkg/rusty"
+	"github.com/taskalataminfo2026/tool-kit-lib-go/pkg/transport/http_client"
+
 	"net/http"
 	"net/url"
 	"strings"
@@ -59,13 +63,13 @@ func (client *RustyClient) generateResponse(ctx context.Context, response *rusty
 		Error: err,
 	}
 	if err != nil {
-		log.Error(ctx, fmt.Sprintf("API ERROR¡: %v, error: %v", err.Error(), err), utils.BuildedTagsToFields(tags)...)
+		log.Error(ctx, fmt.Sprintf("API ERROR¡: %v, error: %v", err.Error(), err))
 	}
 	if response != nil {
 		rustyResponse.Body = response.Body
 		rustyResponse.StatusCode = response.StatusCode
 		tags = utils.Merge(tags, fmt.Sprintf("status code: %v, resp:%v", response.StatusCode, strings.TrimSpace(string(response.Body))))
-		log.Info(ctx, "response", utils.BuildedTagsToFields(tags)...)
+		log.Info(ctx, "response")
 	}
 	if rustyResponse.StatusCode == 0 {
 		rustyResponse.StatusCode = http.StatusFailedDependency
@@ -76,12 +80,12 @@ func (client *RustyClient) generateResponse(ctx context.Context, response *rusty
 
 func (client *RustyClient) Get(ctx context.Context, url string, headers map[string]string, queryParams map[string]string, tags []string) RustyResponse {
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:GET", fmt.Sprintf("headers:%v", headers), fmt.Sprintf("queryParams:%v", queryParams))
-	requester := httpclient.NewRetryable(
+	requester := http_client.NewRetryable(
 		config.RustyConfig.RetryCount,
-		httpclient.WithTimeout(config.RustyConfig.DefaultTimeOut),
+		http_client.WithTimeout(config.RustyConfig.DefaultTimeOut),
 	)
 
-	log.Info(ctx, fmt.Sprintf("GET - url: %v, headers: %v", url, headers), utils.BuildedTagsToFields(tags)...)
+	log.Info(ctx, fmt.Sprintf("GET - url: %v, headers: %v", url, headers))
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:GET")
 
 	endpoint, err := rusty.NewEndpoint(requester, url, client.getEndpointOptions(headers)...)
@@ -99,12 +103,12 @@ func (client *RustyClient) Post(ctx context.Context, url string, headers map[str
 	headers["Content-type"] = "application/json"
 	bodyJSON, _ := json.Marshal(&body)
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:POST", fmt.Sprintf("headers:%v", headers), fmt.Sprintf("body:%v", string(bodyJSON)))
-	requester := httpclient.NewRetryable(
+	requester := http_client.NewRetryable(
 		0,
-		httpclient.WithTimeout(config.RustyConfig.DefaultTimeOut),
+		http_client.WithTimeout(config.RustyConfig.DefaultTimeOut),
 	)
 
-	log.Info(ctx, fmt.Sprintf("POST - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)), utils.BuildedTagsToFields(tags)...)
+	log.Info(ctx, fmt.Sprintf("POST - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)))
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), fmt.Sprintf("body:%v", string(bodyJSON)), "method:POST")
 
 	endpoint, err := rusty.NewEndpoint(requester, url, client.getEndpointOptions(headers)...)
@@ -122,12 +126,12 @@ func (client *RustyClient) Patch(ctx context.Context, url string, headers map[st
 	headers["Content-type"] = "application/json"
 	bodyJSON, _ := json.Marshal(&body)
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:PATCH", fmt.Sprintf("headers:%v", headers), fmt.Sprintf("body:%v", string(bodyJSON)))
-	requester := httpclient.NewRetryable(
+	requester := http_client.NewRetryable(
 		0,
-		httpclient.WithTimeout(config.RustyConfig.DefaultTimeOut),
+		http_client.WithTimeout(config.RustyConfig.DefaultTimeOut),
 	)
 
-	log.Info(ctx, fmt.Sprintf("PATCH - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)), utils.BuildedTagsToFields(tags)...)
+	log.Info(ctx, fmt.Sprintf("PATCH - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)))
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), fmt.Sprintf("body:%v", string(bodyJSON)), "method:PATCH")
 
 	endpoint, err := rusty.NewEndpoint(requester, url, client.getEndpointOptions(headers)...)
@@ -145,12 +149,12 @@ func (client *RustyClient) Put(ctx context.Context, url string, headers map[stri
 	headers["Content-type"] = "application/json"
 	bodyJSON, _ := json.Marshal(&body)
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:PUT", fmt.Sprintf("headers:%v", headers), fmt.Sprintf("body:%v", string(bodyJSON)))
-	requester := httpclient.NewRetryable(
+	requester := http_client.NewRetryable(
 		0,
-		httpclient.WithTimeout(config.RustyConfig.DefaultTimeOut),
+		http_client.WithTimeout(config.RustyConfig.DefaultTimeOut),
 	)
 
-	log.Info(ctx, fmt.Sprintf("PUT - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)), utils.BuildedTagsToFields(tags)...)
+	log.Info(ctx, fmt.Sprintf("PUT - url: %v, headers: %v, body %v", url, headers, string(bodyJSON)))
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), fmt.Sprintf("body:%v", string(bodyJSON)), "method:PUT")
 
 	endpoint, err := rusty.NewEndpoint(requester, url, client.getEndpointOptions(headers)...)
@@ -166,12 +170,12 @@ func (client *RustyClient) Put(ctx context.Context, url string, headers map[stri
 
 func (client *RustyClient) Delete(ctx context.Context, url string, headers map[string]string, params map[string]interface{}, tags []string) RustyResponse {
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:DELETE", fmt.Sprintf("headers:%v", headers), fmt.Sprintf("params:%v", params))
-	requester := httpclient.NewRetryable(
+	requester := http_client.NewRetryable(
 		0,
-		httpclient.WithTimeout(config.RustyConfig.DefaultTimeOut),
+		http_client.WithTimeout(config.RustyConfig.DefaultTimeOut),
 	)
 
-	log.Info(ctx, fmt.Sprintf("DELETE - url: %v, headers: %v", url, headers), utils.BuildedTagsToFields(tags)...)
+	log.Info(ctx, fmt.Sprintf("DELETE - url: %v, headers: %v", url, headers))
 	tags = utils.Merge(tags, fmt.Sprintf("url:%v", url), "method:DELETE")
 
 	endpoint, err := rusty.NewEndpoint(requester, url, client.getEndpointOptions(headers)...)
